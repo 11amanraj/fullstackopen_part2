@@ -1,4 +1,7 @@
-import { useState } from 'react'
+import { useState } from 'react';
+import Filter from './Components/Filter';
+import PersonForm from './Components/PersonForm';
+import Persons from './Components/Persons';
 
 const App = () => {
   const [persons, setPersons] = useState([
@@ -35,7 +38,8 @@ const App = () => {
     e.preventDefault();
     const newPerson = { 
                         name: newName,
-                        number: newNumber
+                        number: newNumber,
+                        id: newName
                       }
     checkDuplicate(newPerson) 
       ? alert(`${newName} is already added to phonebook`)
@@ -51,27 +55,11 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
-      <p>filter shown with <input onChange={filterHandler}/></p>
-      <form onSubmit={submitHandler}>
-        <h2>add a new</h2>
-        <div>
-          name: <input value={newName} onChange={nameInputHandler}/>
-        </div>
-        <div>
-          number: <input value={newNumber} onChange={numberInputHandler}/>
-        </div>
-        <div>
-          <button type="submit">add</button>
-        </div>
-      </form>
+      <Filter filterHandler={filterHandler}/>
+      <h2>add a new</h2>
+      <PersonForm value={{newName,newNumber}} handler={{nameInputHandler,numberInputHandler,submitHandler}} />
       <h2>Numbers</h2>
-      <div>
-        {persons.filter(person => 
-                  person.name.toLowerCase().includes(filterText))
-                .map(person => 
-                  <p key={person.id}>{person.name} {person.number}</p>
-        )}
-      </div>
+      <Persons persons={persons} filterText={filterText} />
     </div>
   )
 }
