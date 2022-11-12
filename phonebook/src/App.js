@@ -9,13 +9,25 @@ const App = () => {
   const inputHandler = e => {
     setNewName(e.target.value);
   }
+  
+  const checkDuplicate = (obj) => {
+    for(let i=0;i<persons.length;i++) {
+      if(i === (persons.length-1)) {
+        return persons[i].name === obj.name;
+      } else {
+        if (persons[i].name === obj.name) {
+          return true
+        }
+      }
+    }
+  }
 
   const submitHandler = e => {
     e.preventDefault();
-    const newPerson = {
-      name: newName
-    }
-    setPersons(persons.concat(newPerson))
+    const newPerson = { name: newName }
+    checkDuplicate(newPerson) 
+      ? alert(`${newName} is already added to phonebook`)
+      : setPersons(persons.concat(newPerson)) 
   }
 
   return (
