@@ -31,17 +31,24 @@ const App = () => {
   }
 
   const submitHandler = e => {
+    const postHandler = (newObj) => {
+      axios
+      .post('http://localhost:3001/persons', newObj)
+      .then(response => {
+        setPersons(persons.concat(response.data));
+        setNewName('');
+        setNewNumber(''); 
+      })
+    }
+
     e.preventDefault();
     const newPerson = { 
                         name: newName,
                         number: newNumber,
-                        id: newName
                       }
     checkDuplicate(newPerson) 
       ? alert(`${newName} is already added to phonebook`)
-      : setPersons(persons.concat(newPerson))
-    setNewName('');
-    setNewNumber(''); 
+      : postHandler(newPerson)
   }
 
   const filterHandler = e => {
