@@ -25,7 +25,6 @@ function App() {
       <CountryList countries={countries.filter(country => 
                           country.name.common.toLowerCase()
                           .includes(filter))}/>
-      
     </div>
   );
 }
