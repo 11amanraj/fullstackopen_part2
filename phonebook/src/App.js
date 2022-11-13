@@ -22,10 +22,10 @@ const App = () => {
   const checkDuplicate = (obj) => {
     for(let i=0;i<persons.length;i++) {
       if(i === (persons.length-1)) {
-        return persons[i].name === obj.name;
+        return (persons[i].name === obj.name) && i;
       } else {
         if (persons[i].name === obj.name) {
-          return true
+          return i;
         }
       }
     }
@@ -42,13 +42,23 @@ const App = () => {
     }
 
     e.preventDefault();
-    const newPerson = { 
-                        name: newName,
-                        number: newNumber,
-                      }
-    checkDuplicate(newPerson) 
-      ? alert(`${newName} is already added to phonebook`)
-      : postHandler(newPerson)
+    const newPerson = { name: newName, number: newNumber }
+
+    if(!!checkDuplicate(newPerson)) {
+      if (window.confirm(`${newPerson.name} is already added to phonebook, replace the old number with a new one?`)) {
+        const index = checkDuplicate(newPerson);
+        contactServices.update(persons[index].id,newPerson)
+          .then(contact => {
+            const newPersons = [...persons];
+            newPersons[index] = contact;
+            setPersons(newPersons);
+            setNewName('');
+            setNewNumber('');
+          });
+      }
+    } else {
+      postHandler(newPerson)
+    }
   }
 
   const filterHandler = e => {
