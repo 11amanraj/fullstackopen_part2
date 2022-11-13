@@ -55,6 +55,14 @@ const App = () => {
     setFilterText(e.target.value.toLowerCase());
   }
 
+  const deleteHandler = (id,name) => {
+    if (window.confirm(`Delete ${name}`)) {
+      contactServices.deleteContact(id)
+      const newPersons = persons.filter(person => person.id !== id)
+      setPersons(newPersons)
+    }
+  }
+
   useEffect(() => {
     contactServices.getAll()
           .then(contacts => setPersons(contacts));
@@ -67,7 +75,7 @@ const App = () => {
       <h2>add a new</h2>
       <PersonForm value={{newName,newNumber}} handler={{nameInputHandler,numberInputHandler,submitHandler}} />
       <h2>Numbers</h2>
-      <Persons persons={persons} filterText={filterText} />
+      <Persons persons={persons} deleteHandler={deleteHandler} filterText={filterText} />
     </div>
   )
 }
