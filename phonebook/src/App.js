@@ -4,20 +4,19 @@ import contactServices from './services/contact';
 import Filter from './Components/Filter';
 import PersonForm from './Components/PersonForm';
 import Persons from './Components/Persons';
+import Message from './Components/Message';
 
 const App = () => {
   const [persons, setPersons] = useState([]) 
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [filterText,setFilterText] = useState('');
+  const [action, setAction] = useState({name: '', action: '', show: false});
 
-  const nameInputHandler = e => {
-    setNewName(e.target.value);
-  }
 
-  const numberInputHandler = e => {
-    setNewNumber(e.target.value);
-  }
+  const nameInputHandler = e => setNewName(e.target.value);
+  const numberInputHandler = e => setNewNumber(e.target.value);
+  const filterHandler = e => setFilterText(e.target.value.toLowerCase());
   
   const checkDuplicate = (obj) => {
     for(let i=0;i<persons.length;i++) {
@@ -54,15 +53,13 @@ const App = () => {
             setPersons(newPersons);
             setNewName('');
             setNewNumber('');
+            setAction({...action, name: newPerson.name, action: 'update', show: true})
           });
       }
     } else {
-      postHandler(newPerson)
+      postHandler(newPerson);
+      setAction({...action, name: newPerson.name, action: 'add', show: true});
     }
-  }
-
-  const filterHandler = e => {
-    setFilterText(e.target.value.toLowerCase());
   }
 
   const deleteHandler = (id,name) => {
@@ -70,17 +67,33 @@ const App = () => {
       contactServices.deleteContact(id)
       const newPersons = persons.filter(person => person.id !== id)
       setPersons(newPersons)
+      setAction({...action, name: name, action: 'delete', show: true});
     }
   }
 
   useEffect(() => {
     contactServices.getAll()
-          .then(contacts => setPersons(contacts));
+    .then(contacts => setPersons(contacts));
   }, [])
+  
+  useEffect(() => {
+    setTimeout(() => {
+      if(action.show) {
+        setAction({...action, show: false})
+      }
+    }, 5000)
+
+    return () => clearTimeout(setTimeout(() => {
+      if(action.show) {
+        setAction({...action, show: false})
+      }
+    }, 5000))
+  }, [action])
 
   return (
     <div>
       <h2>Phonebook</h2>
+      {action.show && <Message value={action}/>}
       <Filter filterHandler={filterHandler}/>
       <h2>add a new</h2>
       <PersonForm value={{newName,newNumber}} handler={{nameInputHandler,numberInputHandler,submitHandler}} />
