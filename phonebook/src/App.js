@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import axios from 'axios';
+import contactServices from './services/contact';
+
 import Filter from './Components/Filter';
 import PersonForm from './Components/PersonForm';
 import Persons from './Components/Persons';
@@ -32,12 +33,11 @@ const App = () => {
 
   const submitHandler = e => {
     const postHandler = (newObj) => {
-      axios
-      .post('http://localhost:3001/persons', newObj)
-      .then(response => {
-        setPersons(persons.concat(response.data));
-        setNewName('');
-        setNewNumber(''); 
+      contactServices.create(newObj)
+        .then(contact => {
+          setPersons(persons.concat(contact));
+          setNewName('');
+          setNewNumber('');
       })
     }
 
@@ -56,11 +56,8 @@ const App = () => {
   }
 
   useEffect(() => {
-    axios
-      .get('http://localhost:3001/persons')
-      .then(response => {
-        setPersons(response.data);
-      })
+    contactServices.getAll()
+          .then(contacts => setPersons(contacts));
   }, [])
 
   return (
