@@ -11,8 +11,7 @@ const App = () => {
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [filterText,setFilterText] = useState('');
-  const [action, setAction] = useState({name: '', action: '', show: false});
-
+  const [message, setMessage] = useState(null);
 
   const nameInputHandler = e => setNewName(e.target.value);
   const numberInputHandler = e => setNewNumber(e.target.value);
@@ -53,21 +52,28 @@ const App = () => {
             setPersons(newPersons);
             setNewName('');
             setNewNumber('');
-            setAction({...action, name: newPerson.name, action: 'update', show: true})
-          });
+            setMessage({text: `Updated ${newPerson.name}`, type: 'success'})
+          })
+          .catch(error => setMessage({
+            text: `Information of ${newPerson.name} has already been removed from the server`, 
+            type: 'error'}));
       }
     } else {
       postHandler(newPerson);
-      setAction({...action, name: newPerson.name, action: 'add', show: true});
+      setMessage({text: `Added ${newPerson.name}`, type: 'success'})
     }
   }
 
   const deleteHandler = (id,name) => {
     if (window.confirm(`Delete ${name}`)) {
-      contactServices.deleteContact(id)
+      contactServices
+        .deleteContact(id)
+        .catch(error => setMessage({
+          text: `Information of ${name} has already been removed from the server`, 
+          type: 'error'}));
       const newPersons = persons.filter(person => person.id !== id)
       setPersons(newPersons)
-      setAction({...action, name: name, action: 'delete', show: true});
+      setMessage({text: `Deleted ${name}`, type: 'success'})
     }
   }
 
@@ -78,22 +84,22 @@ const App = () => {
   
   useEffect(() => {
     setTimeout(() => {
-      if(action.show) {
-        setAction({...action, show: false})
+      if(message !== null) {
+        setMessage(null);
       }
     }, 5000)
 
     return () => clearTimeout(setTimeout(() => {
-      if(action.show) {
-        setAction({...action, show: false})
+      if(message !== null) {
+        setMessage(null);
       }
     }, 5000))
-  }, [action])
+  }, [message])
 
   return (
     <div>
       <h2>Phonebook</h2>
-      {action.show && <Message value={action}/>}
+      {(message !== null) && <Message message={message}/>}
       <Filter filterHandler={filterHandler}/>
       <h2>add a new</h2>
       <PersonForm value={{newName,newNumber}} handler={{nameInputHandler,numberInputHandler,submitHandler}} />

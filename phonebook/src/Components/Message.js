@@ -1,19 +1,10 @@
 import './Message.css';
 
-const Message = ({value}) => {
-    let renderText;
-    if (value.action === 'add') {
-        renderText = <h3>Added {value.name}</h3>
-    } else if (value.action === 'update') {
-        renderText = <h3>Updated {value.name}</h3>
-    } else if (value.action === 'delete') {
-        renderText = <h3>Deleted {value.name}</h3>
-    }
-
+const Message = ({message}) => {
     return ( 
-        <div className='message'>
-            {renderText}
-        </div>
+        <h3 className={message.type}>
+            {message.text}
+        </h3>
      );
 }
  

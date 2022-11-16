@@ -1,7 +1,15 @@
-.message {
+.success {
     border: 5px solid green;
     border-radius: 4px;
-    padding: 0px 8px;
+    padding: 8px 8px;
     background-color: rgb(176, 173, 173);
     color: green;
+}
+
+.error {
+    border: 5px solid rgb(196, 46, 46);
+    border-radius: 4px;
+    padding: 8px 8px;
+    background-color: rgb(176, 173, 173);
+    color: rgb(196, 46, 46);
 }
