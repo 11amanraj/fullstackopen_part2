@@ -59,9 +59,19 @@ const App = () => {
             contactServices.getAll()
               .then(contacts => setPersons(contacts));
           })
-          .catch(error => setMessage({
-            text: `Information of ${newPerson.name} has already been removed from the server`, 
-            type: 'error'}));
+          .catch(error => {
+            if (error.response.statusText === 'Bad Request') {
+              setMessage({
+                text: error.response.data.error, 
+                type: 'error'
+              })
+              return
+            }
+            setMessage({
+              text: `Information of ${newPerson.name} has already been removed from the server`, 
+              type: 'error'
+            })
+          });
       }
     } else {
       postHandler(newPerson)
