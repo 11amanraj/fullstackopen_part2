@@ -36,7 +36,10 @@ const App = () => {
           setPersons(persons.concat(contact));
           setNewName('');
           setNewNumber('');
-      })
+          setMessage({text: `Added ${newObj.name}`, type: 'success'})
+          console.log(contact);
+        })
+        .catch(error => setMessage({text: error.response.data.error, type: 'error'}))
     }
 
     e.preventDefault();
@@ -53,14 +56,15 @@ const App = () => {
             setNewName('');
             setNewNumber('');
             setMessage({text: `Updated ${newPerson.name}`, type: 'success'})
+            contactServices.getAll()
+              .then(contacts => setPersons(contacts));
           })
           .catch(error => setMessage({
             text: `Information of ${newPerson.name} has already been removed from the server`, 
             type: 'error'}));
       }
     } else {
-      postHandler(newPerson);
-      setMessage({text: `Added ${newPerson.name}`, type: 'success'})
+      postHandler(newPerson)
     }
   }
 
